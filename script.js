@@ -26,7 +26,7 @@ function gantiNama() {
 }
 
 function tambahJurnal() {
-    const waktuSholat = document.getElementById("waktuSholat").value;
+    const waktuSholat = document.getElementById("waktu Sholat").value;
     const lokasi = document.getElementById("lokasi").value;
     const namaUser = localStorage.getItem('username') || "Tamu";
     const sekarang = new Date();
@@ -49,17 +49,21 @@ function tambahJurnal() {
 }
 
 function tampilkanData(mode) {
-    function updateStatistik(dataFiltered) {
-    // Menghitung total data yang tampil
-    const total = dataFiltered.length;
-    
-    // Menghitung berapa banyak yang lokasinya mengandung kata "Masjid"
-    const diMasjid = dataFiltered.filter(item => item.lokasi.includes("Masjid")).length;
+    // Ganti bagian looping di fungsi tampilkanData(mode) menjadi:
+tabelBody.innerHTML = "";
+listJurnal.reverse().forEach(item => {
+    const row = tabelBody.insertRow();
+    row.innerHTML = `
+        <td style="width: 60%">
+            <div style="font-weight: 600; color: #333;">${item.waktuSholat}</div>
+            <div style="font-size: 11px; color: #888;">${item.tanggal}</div>
+        </td>
+        <td style="text-align: right; color: var(--primary); font-weight: 500;">
+            ${item.lokasi}
+        </td>
+    `;
+});
 
-    // Memasukkan angka ke tampilan HTML
-    document.getElementById("totalSholat").innerText = total;
-    document.getElementById("totalMasjid").innerText = diMasjid;
-}
 
     const tabelBody = document.getElementById("tabelBody");
     let listJurnal = JSON.parse(localStorage.getItem('jurnalSholat')) || [];
@@ -95,7 +99,7 @@ function hapusSemua() {
 const API_URL = "https://sheetdb.io/api/v1/fn4op9bg5hpfv";
 
 function tambahJurnal() {
-    const waktuSholat = document.getElementById("waktuSholat").value;
+    const waktuSholat = document.getElementById("waktu Sholat").value;
     const lokasi = document.getElementById("lokasi").value;
     const namaUser = localStorage.getItem('username') || "Tamu";
     const sekarang = new Date();
