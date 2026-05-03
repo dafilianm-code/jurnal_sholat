@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Jurnal Sholat Harian</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>🕌 Jurnal Sholat</h2>
+        <!-- Tambahkan ini di bawah tag <h2> -->
+     <div id="userSection" style="text-align: center; margin-bottom: 20px; font-weight: bold; color: #096c0e;">
+    Halo, <span id="displayNama">Tamu</span>! 
+    <button onclick="gantiNama()" style="width: auto; padding: 5px 10px; font-size: 10px; background: #666;">Ganti Nama</button>
+     </div>
+
+        
+        <div class="input-group">
+            <label>Waktu Sholat:</label>
+            <select id="waktuSholat">
+                <option value="Subuh">Subuh</option>
+                <option value="Dzuhur">Dzuhur</option>
+                <option value="Ashar">Ashar</option>
+                <option value="Maghrib">Maghrib</option>
+                <option value="Isya">Isya</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label>Lokasi:</label>
+            <select id="lokasi">
+                <option value="Masjid 🕌">Masjid (Berjamaah)</option>
+                <option value="Rumah 🏠">Di luar/ Bukan di Masjid</option>
+            </select>
+        </div>
+
+        <button onclick="tambahJurnal()">Catat Kehadiran</button>
+
+        <div class="filter-group">
+            <!-- Tambahkan di bawah div class="filter-group" -->
+<div class="stats-container">
+    <div class="stat-box">
+        <span id="totalSholat">0</span>
+        <p>Total Sholat</p>
+    </div>
+    <div class="stat-box masjid">
+        <span id="totalMasjid">0</span>
+        <p>Di Masjid</p>
+    </div>
+</div>
+
+            <button class="btn-filter" onclick="tampilkanData('hari')">Lihat Hari Ini</button>
+            <button class="btn-filter" onclick="tampilkanData('minggu')">Laporan Mingguan</button>
+            <button class="btn-danger" onclick="hapusSemua()">Reset Data</button>
+        </div>
+
+        <table id="tabelJurnal">
+            <thead>
+                <tr>
+                    <th>Hari/Tanggal</th>
+                    <th>Sholat</th>
+                    <th>Lokasi</th>
+                </tr>
+            </thead>
+            <tbody id="tabelBody"></tbody>
+        </table>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
