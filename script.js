@@ -96,7 +96,7 @@ function hapusSemua() {
     }
 }
 // Ganti dengan API URL milikmu dari SheetDB
-const API_URL = "https://sheetdb.io/api/v1/fn4op9bg5hpfv";
+const API_URL = "https://sheetdb.io/api/v1/38d9xtdt0nram";
 
 function tambahJurnal() {
     const waktuSholat = document.getElementById("waktu Sholat").value;
