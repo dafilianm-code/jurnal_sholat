@@ -2,70 +2,70 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Jurnal Sholat Harian</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jurnal Sholat Digital</title>
+    <!-- Link Font Google -->
+    <link href="https://googleapis.com" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="arabic-pattern"></div> <!-- Pola Geometris Background -->
+    
     <div class="container">
-        <h2>🕌 Jurnal Sholat</h2>
-        <!-- Tambahkan ini di bawah tag <h2> -->
-     <div id="userSection" style="text-align: center; margin-bottom: 20px; font-weight: bold; color: #096c0e;">
-    Halo, <span id="displayNama">Tamu</span>! 
-    <button onclick="gantiNama()" style="width: auto; padding: 5px 10px; font-size: 10px; background: #666;">Ganti Nama</button>
-     </div>
-
-        
-        <div class="input-group">
-            <label>Waktu Sholat:</label>
-            <select id="waktuSholat">
-                <option value="Subuh">Subuh</option>
-                <option value="Dzuhur">Dzuhur</option>
-                <option value="Ashar">Ashar</option>
-                <option value="Maghrib">Maghrib</option>
-                <option value="Isya">Isya</option>
-            </select>
+        <div class="header-arabic">
+            <h1 class="calligraphy">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</h1>
+            <p>Jurnal Ibadah Harian</p>
         </div>
 
-        <div class="input-group">
-            <label>Lokasi:</label>
-            <select id="lokasi">
-                <option value="Masjid 🕌">Masjid (Berjamaah)</option>
-                <option value="Rumah 🏠">Di luar/ Bukan di Masjid</option>
-            </select>
+        <div id="userSection">
+            <span>Salam, <b id="displayNama">...</b></span>
+            <button onclick="gantiNama()" class="btn-small">Ganti Nama</button>
         </div>
 
-        <button onclick="tambahJurnal()">Catat Kehadiran</button>
+        <!-- Input Group Tetap Sama Seperti Sebelumnya -->
+        <div class="input-card">
+            <div class="input-group">
+                <label>Waktu Sholat</label>
+                <select id="waktuSholat">
+                    <option value="Subuh">Subuh (الفجر)</option>
+                    <option value="Maghrib">Maghrib (المغرب)</option>
+                    <option value="Isya">Isya (العشاء)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Lokasi Ibadah</label>
+                <select id="lokasi">
+                    <option value="Masjid 🕌">Masjid (Berjamaah)</option>
+                    <option value="Rumah 🏠">Rumah / Sendiri</option>
+                </select>
+            </div>
+
+            <button onclick="tambahJurnal()" class="btn-primary">Catat Kehadiran</button>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <span id="totalSholat">0</span>
+                <p>Total</p>
+            </div>
+            <div class="stat-box masjid">
+                <span id="totalMasjid">0</span>
+                <p>Masjid</p>
+            </div>
+        </div>
 
         <div class="filter-group">
-            <!-- Tambahkan di bawah div class="filter-group" -->
-<div class="stats-container">
-    <div class="stat-box">
-        <span id="totalSholat">0</span>
-        <p>Total Sholat</p>
-    </div>
-    <div class="stat-box masjid">
-        <span id="totalMasjid">0</span>
-        <p>Di Masjid</p>
-    </div>
-</div>
-
-            <button class="btn-filter" onclick="tampilkanData('hari')">Lihat Hari Ini</button>
-            <button class="btn-filter" onclick="tampilkanData('minggu')">Laporan Mingguan</button>
-            <button class="btn-danger" onclick="hapusSemua()">Reset Data</button>
+            <button onclick="tampilkanData('hari')">Hari Ini</button>
+            <button onclick="tampilkanData('minggu')">Mingguan</button>
+            <button onclick="hapusSemua()" class="btn-danger">Reset</button>
         </div>
 
-        <table id="tabelJurnal">
-            <thead>
-                <tr>
-                    <th>Hari/Tanggal</th>
-                    <th>Sholat</th>
-                    <th>Lokasi</th>
-                </tr>
-            </thead>
+        <table>
             <tbody id="tabelBody"></tbody>
         </table>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
-
