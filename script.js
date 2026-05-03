@@ -1,91 +1,105 @@
+// 1. Masukkan API URL SheetDB kamu di sini
+const API_URL = "https://sheetdb.io/api/v1/38d9xtdt0nram"; 
+
+// 2. Fungsi yang berjalan otomatis saat halaman dibuka
 window.onload = () => {
     cekUser();
-    tampilkanData('hari');
+    tampilkanData('hari'); // Menampilkan data hari ini saat mulai
 };
 
 function cekUser() {
     let nama = localStorage.getItem('username');
     if (!nama) {
         nama = prompt("Siapa nama kamu?");
-        if (nama) {
-            localStorage.setItem('username', nama);
-        } else {
-            nama = "Hamba Allah";
-        }
+        localStorage.setItem('username', nama || "Hamba Allah");
     }
-    document.getElementById("displayNama").innerText = nama;
+    const displayNama = document.getElementById("displayNama");
+    if (displayNama) displayNama.innerText = nama || "Hamba Allah";
 }
 
 function gantiNama() {
     let namaBaru = prompt("Masukkan nama baru:");
     if (namaBaru) {
         localStorage.setItem('username', namaBaru);
-        document.getElementById("displayNama").innerText = namaBaru;
-        tampilkanData('hari'); // Refresh tampilan
+        location.reload(); // Refresh halaman agar nama terupdate di semua tempat
     }
 }
 
 function tambahJurnal() {
-    const waktuSholat = document.getElementById("waktu Sholat").value;
-    const lokasi = document.getElementById("lokasi").value;
+    // Pastikan ID di HTML sama persis: "waktuSholat" dan "lokasi"
+    const elWaktu = document.getElementById("waktuSholat");
+    const elLokasi = document.getElementById("lokasi");
+
+    if (!elWaktu || !elLokasi) {
+        alert("Error: Elemen input tidak ditemukan di HTML!");
+        return;
+    }
+
+    const waktuSholat = elWaktu.value;
+    const lokasi = elLokasi.value;
     const namaUser = localStorage.getItem('username') || "Tamu";
     const sekarang = new Date();
     
     const dataBaru = {
         id: Date.now(),
-        nama: namaUser, // Menyimpan nama user di setiap baris data
-        tanggal: sekarang.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }),
-        rawDate: sekarang.toISOString(),
+        nama: namaUser,
+        tanggal: "'" + sekarang.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }),
         waktuSholat: waktuSholat,
-        lokasi: lokasi
+        lokasi: lokasi,
+        rawDate: sekarang.toISOString()
     };
 
+    // Simpan ke LocalStorage
     let listJurnal = JSON.parse(localStorage.getItem('jurnalSholat')) || [];
     listJurnal.push(dataBaru);
     localStorage.setItem('jurnalSholat', JSON.stringify(listJurnal));
-    
-    alert(`Data ${waktuSholat} untuk ${namaUser} berhasil disimpan!`);
+
+    // Kirim ke Google Sheets
+    fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: [dataBaru] })
+    }).then(() => console.log("Berhasil ke Sheets"));
+
+    alert("Alhamdulillah, sudah dicatat!");
     tampilkanData('hari');
 }
 
 function tampilkanData(mode) {
-    // Ganti bagian looping di fungsi tampilkanData(mode) menjadi:
-tabelBody.innerHTML = "";
-listJurnal.reverse().forEach(item => {
-    const row = tabelBody.insertRow();
-    row.innerHTML = `
-        <td style="width: 60%">
-            <div style="font-weight: 600; color: #333;">${item.waktuSholat}</div>
-            <div style="font-size: 11px; color: #888;">${item.tanggal}</div>
-        </td>
-        <td style="text-align: right; color: var(--primary); font-weight: 500;">
-            ${item.lokasi}
-        </td>
-    `;
-});
-
-
     const tabelBody = document.getElementById("tabelBody");
+    if (!tabelBody) return; // Mencegah error jika tabel belum ada
+
     let listJurnal = JSON.parse(localStorage.getItem('jurnalSholat')) || [];
     const sekarang = new Date();
 
-    // Logika Filter
+    // Filter Data
     if (mode === 'hari') {
         const hariIni = sekarang.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' });
-        listJurnal = listJurnal.filter(item => item.tanggal === hariIni);
+        listJurnal = listJurnal.filter(item => item.tanggal.replace("'", "") === hariIni);
     } else if (mode === 'minggu') {
         const tujuhHariLalu = new Date();
         tujuhHariLalu.setDate(sekarang.getDate() - 7);
         listJurnal = listJurnal.filter(item => new Date(item.rawDate) >= tujuhHariLalu);
     }
 
+    // Update Statistik
+    const totalMasjid = listJurnal.filter(item => item.lokasi.includes("Masjid")).length;
+    if(document.getElementById("totalSholat")) document.getElementById("totalSholat").innerText = listJurnal.length;
+    if(document.getElementById("totalMasjid")) document.getElementById("totalMasjid").innerText = totalMasjid;
+
+    // Render Tabel
     tabelBody.innerHTML = "";
     listJurnal.reverse().forEach(item => {
         const row = tabelBody.insertRow();
-        // Menampilkan nama di dalam tabel jika melihat laporan mingguan
-        row.insertCell(0).innerHTML = `<b>${item.nama}</b><br><small>${item.tanggal}</small>`;
-        row.insertCell(1).innerHTML = item.waktuSholat;
-        row.insertCell(2).innerHTML = item.lokasi;
+        row.innerHTML = `
+            <td style="width: 60%">
+                <div style="font-weight: 600; color: #333;">${item.waktuSholat}</div>
+                <div style="font-size: 11px; color: #888;">${item.tanggal.replace("'", "")}</div>
+            </td>
+            <td style="text-align: right; color: #1b5e20; font-weight: 500;">
+                ${item.lokasi}
+            </td>
+        `;
     });
 }
 
@@ -94,48 +108,4 @@ function hapusSemua() {
         localStorage.removeItem('jurnalSholat');
         tampilkanData('hari');
     }
-}
-// Ganti dengan API URL milikmu dari SheetDB
-const API_URL = "https://sheetdb.io/api/v1/38d9xtdt0nram";
-
-function tambahJurnal() {
-    const waktuSholat = document.getElementById("waktu Sholat").value;
-    const lokasi = document.getElementById("lokasi").value;
-    const namaUser = localStorage.getItem('username') || "Tamu";
-    const sekarang = new Date();
-    
-    const dataBaru = {
-        id: Date.now(),
-        nama: namaUser,
-        tanggal: sekarang.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }),
-        waktuSholat: waktuSholat,
-        lokasi: lokasi
-    };
-
-    // 1. Simpan ke LocalStorage (sebagai backup di HP)
-    let listJurnal = JSON.parse(localStorage.getItem('jurnalSholat')) || [];
-    listJurnal.push(dataBaru);
-    localStorage.setItem('jurnalSholat', JSON.stringify(listJurnal));
-
-    // 2. Kirim ke Google Sheets (Excel)
-    fetch(API_URL, {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            data: [dataBaru]
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Berhasil tersimpan ke Excel:', data);
-        alert("Data berhasil masuk ke Jurnal & Excel!");
-        tampilkanData('hari');
-    })
-    .catch(error => {
-        console.error('Gagal kirim ke Excel:', error);
-        alert("Tersimpan di HP, tapi gagal kirim ke Excel (Cek internet)");
-    });
 }
